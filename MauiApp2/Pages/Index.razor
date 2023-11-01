@@ -1,0 +1,194 @@
+﻿@page "/"
+@using MauiApp2.Data;
+@implements IDisposable
+
+
+<h1>Hlavný panel</h1>
+
+<div>
+	<button @onclick="AddNewItem">ADD item</button>
+</div>
+
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+
+			<th scope="col">F_Oblec </th>
+			<th scope="col">F_Vlas</th>
+
+			<th scope="col">Vek</th>
+			<th scope="col">Kontainer</th>
+			<th scope="col">Vratne</th>
+			<th scope="col">Cas Celkom</th>
+			<th scope="col">Cas Rada</th>
+			<th scope="col">Cas Pokladna</th>
+			<th scope="col">Cas Vratna</th>
+			<th scope="col">Alhokol</th>
+
+			<th scope="col">Delete</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var data in Zberac.ZoznamZaznamov)
+		{
+			<tr @key=data>
+
+				<td>
+					<input type="color" @bind=data.FarbaOblecenia />
+				</td>
+				<td>
+					<input type="color" @bind=@data.FarbaVlasov />
+				</td>
+				<td>
+					<select @bind=@data.Vek>
+						@foreach (TypVek enumValue in Enum.GetValues(typeof(TypVek)))
+						{
+							<option value="@(enumValue)">@enumValue</option>
+						}
+					</select>
+				</td>
+				<td>
+					<select @bind=@data.Kontainer>
+						@foreach (TypKontainera enumValue in Enum.GetValues(typeof(TypKontainera)))
+						{
+							<option value="@(enumValue)">@enumValue</option>
+						}
+					</select>
+				</td>
+				<td>
+					<input type="checkbox" @bind=@data.MaVratKus />
+				</td>
+				<td>
+					<input type="text" id="timerInput" @bind=data.CasCelkovy @bind:format="mm:ss" />
+					<button @onclick="() => StartTimer(data, 0)">Start</button>
+					<button @onclick="() => StopTimer(data, 0)">Stop</button>
+					<!-- <button @@onclick="() => ResetTimer(data, 0)">Reset</button> -->
+				</td>
+				<td>
+					<input type="text" id="timerInput" @bind=data.CasVRade @bind:format="mm:ss" />
+					<button @onclick="() => StartTimer(data, 1)">Start</button>
+					<button @onclick="() => StopTimer(data, 1)">Stop</button>
+				</td>
+				<td>
+					<input type="text" id="timerInput" @bind=data.CasZaPokladnou @bind:format="mm:ss" />
+					<button @onclick="() => StartTimer(data, 2)">Start</button>
+					<button @onclick="() => StopTimer(data, 2)">Stop</button>
+				</td>
+				<td>
+					<input type="text" id="timerInput" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
+					<button @onclick="() => StartTimer(data, 3)" disabled="@(!data.MaVratKus)">Start</button>
+					<button @onclick="() => StopTimer(data, 3)" disabled="@(!data.MaVratKus)">Stop</button>
+				</td>
+				<td>
+					<input type="checkbox" @bind=@data.MaAlkohol />
+				</td>
+
+				<td>
+					<button @onclick="() => Vymaz(Zberac.ZoznamZaznamov.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
+				</td>
+
+			</tr>
+		}
+
+
+
+
+	</tbody>
+</table>
+
+@code {
+	//private DateTime currentDateTime = new DateTime(2000, 1, 1, 0, 0, 0);
+	private TimeSpan currentTime;                           //Casomiera DataTime MAX jeden den, inak reset
+	private System.Timers.Timer timer;
+	private bool isRunning = false;
+
+
+	private void Vymaz(int row)
+	{
+		Zberac.ZoznamZaznamov.RemoveAt(row);
+	}
+
+	private void StartTimer(Item akutalnyItem, int ktoryCasovac)
+	{
+
+		//novyItem.CasCelkovy = novyItem.CasCelkovy.AddSeconds(12);
+		akutalnyItem.CasManager[ktoryCasovac] = true;           //zapnutie dotycneho casovaca
+
+		if (!isRunning)     //	zapnutie timera ak este nebol zapnuty. //POZOR ak sa nestopnu timery tak spustenim jedneho casovaca sa automaticky spustia ostatne, kedze ich stav sa nezmenil na false (moze mat plusy a minusy)
+		{
+			isRunning = true;
+			timer = new System.Timers.Timer(1000); // 1-second interval
+			timer.Elapsed += TimerElapsed;
+			timer.Start();
+		}
+
+	}
+
+
+	private void StopTimer(Item akutalnyItem, int ktoryCasovac)
+	{
+
+		akutalnyItem.CasManager[ktoryCasovac] = false;      //vypnutie dotycneho casovaca, celkovy cas stale plynie (je to asi jedno ze ide)
+
+		/*if (isRunning)
+			{
+			isRunning = false;
+			timer.Stop();
+		}*/
+	}
+
+	private void ResetTimer(Item akutalnyItem, int ktoryCasovac)        //nevyuzivam ale mozno sa niekedy bude hodit
+	{
+		//StopTimer(akutalnyItem, ktoryCasovac);		//cize zastavi dany timer
+		//currentTime = TimeSpan.Zero;				//nema vyznam
+		//currentDateTime = DateTime.Today.Add(currentTime);
+	}
+
+	private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+	{
+		//currentTime = currentTime.Add(TimeSpan.FromSeconds(1));		//netreba vyuzivat
+		//currentDateTime = DateTime.Today.Add(currentTime);
+
+		foreach (var item in Zberac.ZoznamZaznamov) //refresh casovacov o sekundu, //NOTE: ak toto bude trvat dlhsie nez sekundu tak asi sa cyklit bude donekonecna
+		{
+			if (item.CasManager[0])
+			{
+				item.CasCelkovy = item.CasCelkovy.AddSeconds(1);
+			}
+			if (item.CasManager[1])
+			{
+				item.CasVRade = item.CasVRade.AddSeconds(1);
+			}
+			if (item.CasManager[2])
+			{
+				item.CasZaPokladnou = item.CasZaPokladnou.AddSeconds(1);
+			}
+			if (item.CasManager[3])
+			{
+				item.CasZaVratnouStanicou = item.CasZaVratnouStanicou.AddSeconds(1);
+			}
+		}
+
+		InvokeAsync(() => StateHasChanged());       //da impulz na aktualizovanie okna
+	}
+
+	public void Dispose()       //ak sa prepne do ineho tabu tak sa casovac vymaze (doporucuje sa to)
+	{
+		if (timer != null)
+		{
+			timer.Stop();
+			timer.Dispose();
+		}
+	}
+
+	public void AddNewItem()
+	{
+		Zberac.ZoznamZaznamov.Add(new Item());
+	}
+
+
+
+
+}

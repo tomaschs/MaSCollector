@@ -1,0 +1,67 @@
+﻿@page "/settings"
+@using MauiApp2.Data
+@using Microsoft.Maui.Storage
+@using System.IO
+@using System.Text.Json
+@using CommunityToolkit.Maui.Storage
+
+<h3>Settings</h3>
+
+<button @onclick="VyberPriecinka" class="oi oi-folder btn btn-primary "></button>
+<input type="text" disabled="disabled" @bind="Zberac.FolderPath" @onclick="VyberPriecinka" />
+<div class="m-3">
+	<button @onclick="SaveToFile"  class="oi oi-file btn btn-outline-success" >Save data to selected folder</button>
+</div>
+
+
+@code {
+
+
+
+	private async void VyberPriecinka()
+	{
+		try
+		{
+			var folder = await FolderPicker.PickAsync(default);
+			Zberac.FolderPath = folder.Folder.Path;
+		}
+		catch
+		{
+
+		}
+		await InvokeAsync(() => StateHasChanged());
+	}
+
+	private async Task SaveToFile()
+	{
+		if (Zberac.FolderPath.Equals("Vyber priecinok..."))
+		{
+			await App.Current.MainPage.DisplayAlert("Choose a folder please", $"", "OPSIE");
+		}
+		try
+		{
+			var path = Path.Combine(Zberac.FolderPath, "DataFromObserve.csv");
+			if (!File.Exists(path))
+			{
+				File.WriteAllText(path, "");		//vytvori subor ak neni
+			}
+
+			foreach (var item in Zberac.ZoznamZaznamov)
+			{
+				File.AppendAllText(path, item.getCsvZaznam());
+			}
+
+			Zberac.ZoznamZaznamov.Clear();			//vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
+
+			await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {path}", "OK");
+		}
+		catch
+		{
+			await App.Current.MainPage.DisplayAlert("Error in appending a file ", $"Unhandled exception occured", "OH");
+		}
+	}
+
+	
+	//publishnut appku
+}
+
