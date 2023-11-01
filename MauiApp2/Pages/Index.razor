@@ -17,15 +17,17 @@
 			<th scope="col">F_Oblec </th>
 			<th scope="col">F_Vlas</th>
 
+			<th scope="col">Sex</th>
 			<th scope="col">Vek</th>
 			<th scope="col">Kontainer</th>
 			<th scope="col">Vratne</th>
 			<th scope="col">Cas Celkom</th>
+			<th scope="col">Cas Vozik</th>
 			<th scope="col">Cas Rada</th>
 			<th scope="col">Cas Pokladna</th>
 			<th scope="col">Cas Vratna</th>
-			<th scope="col">Alhokol</th>
-
+			<th scope="col">Pokladna</th>
+			<th scope="col">Nakup</th>
 			<th scope="col">Delete</th>
 
 		</tr>
@@ -40,6 +42,9 @@
 				</td>
 				<td>
 					<input type="color" @bind=@data.FarbaVlasov />
+				</td>
+				<td>
+					<input type="checkbox" @bind=@data.Pohlavie />
 				</td>
 				<td>
 					<select @bind=@data.Vek>
@@ -60,29 +65,41 @@
 				<td>
 					<input type="checkbox" @bind=@data.MaVratKus />
 				</td>
-				<td>
-					<input type="text" id="timerInput" @bind=data.CasCelkovy @bind:format="mm:ss" />
-					<button @onclick="() => StartTimer(data, 0)">Start</button>
-					<button @onclick="() => StopTimer(data, 0)">Stop</button>
-					<!-- <button @@onclick="() => ResetTimer(data, 0)">Reset</button> -->
+				<td >
+					<input type="text" @bind=data.CasCelkovy @bind:format="mm:ss" />
+					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 0)">Start</button>
+					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 0)">Stop</button>
 				</td>
 				<td>
-					<input type="text" id="timerInput" @bind=data.CasVRade @bind:format="mm:ss" />
-					<button @onclick="() => StartTimer(data, 1)">Start</button>
-					<button @onclick="() => StopTimer(data, 1)">Stop</button>
+					<input type="text"@bind=data.CasVozik @bind:format="mm:ss" />
+					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 1)">Start</button>
+					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 1)">Stop</button>
 				</td>
 				<td>
-					<input type="text" id="timerInput" @bind=data.CasZaPokladnou @bind:format="mm:ss" />
-					<button @onclick="() => StartTimer(data, 2)">Start</button>
-					<button @onclick="() => StopTimer(data, 2)">Stop</button>
+					<input type="text" @bind=data.CasVRade @bind:format="mm:ss" />
+					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 2)">Start</button>
+					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 2)">Stop</button>
 				</td>
 				<td>
-					<input type="text" id="timerInput" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
-					<button @onclick="() => StartTimer(data, 3)" disabled="@(!data.MaVratKus)">Start</button>
-					<button @onclick="() => StopTimer(data, 3)" disabled="@(!data.MaVratKus)">Stop</button>
+					<input type="text"  @bind=data.CasZaPokladnou @bind:format="mm:ss" />
+					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 3)">Start</button>
+					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 3)">Stop</button>
 				</td>
 				<td>
-					<input type="checkbox" @bind=@data.MaAlkohol />
+					<input type="text" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
+					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 4)" disabled="@(!data.MaVratKus)">Start</button>
+					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 4)" disabled="@(!data.MaVratKus)">Stop</button>
+				</td>
+				<td>
+					<input type="checkbox" @bind=@data.Pokladna />
+				</td>
+				<td>
+					<select multiple class="form-select-lg" @onchange="(args) => HandleChange(args,data)">
+						@foreach (var option in optMoznosti)
+						{
+							<option @key=@option selected=@(data.MoznostiNakupu.Contains(option)) value=@option>@option</option>
+						}
+					</select>
 				</td>
 
 				<td>
@@ -103,24 +120,33 @@
 	private TimeSpan currentTime;                           //Casomiera DataTime MAX jeden den, inak reset
 	private System.Timers.Timer timer;
 	private bool isRunning = false;
+	private string[] optMoznosti = new string[] { "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" };
 
 
-	private void Vymaz(int row)
+	void HandleChange(ChangeEventArgs args, Item aktualnyItem)      //nastavi oznaceny select
+	{
+		aktualnyItem.MoznostiNakupu.Clear();
+		aktualnyItem.MoznostiNakupu.AddRange((string[])args.Value);
+	}
+
+	private void Vymaz(int row)     //vymaze prvok z riadku
 	{
 		Zberac.ZoznamZaznamov.RemoveAt(row);
 	}
 
-	private void StartTimer(Item akutalnyItem, int ktoryCasovac)
+	private void StartTimer(Item akutalnyItem, int ktoryCasovac)        //spusti casovac / prida casovac
 	{
 
-		//novyItem.CasCelkovy = novyItem.CasCelkovy.AddSeconds(12);
 		akutalnyItem.CasManager[ktoryCasovac] = true;           //zapnutie dotycneho casovaca
 
 		if (!isRunning)     //	zapnutie timera ak este nebol zapnuty. //POZOR ak sa nestopnu timery tak spustenim jedneho casovaca sa automaticky spustia ostatne, kedze ich stav sa nezmenil na false (moze mat plusy a minusy)
 		{
 			isRunning = true;
-			timer = new System.Timers.Timer(1000); // 1-second interval
-			timer.Elapsed += TimerElapsed;
+			if (timer == null)
+			{
+				timer = new System.Timers.Timer(1000); // 1-second interval
+				timer.Elapsed += TimerElapsed;
+			}
 			timer.Start();
 		}
 
@@ -148,8 +174,6 @@
 
 	private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
 	{
-		//currentTime = currentTime.Add(TimeSpan.FromSeconds(1));		//netreba vyuzivat
-		//currentDateTime = DateTime.Today.Add(currentTime);
 
 		foreach (var item in Zberac.ZoznamZaznamov) //refresh casovacov o sekundu, //NOTE: ak toto bude trvat dlhsie nez sekundu tak asi sa cyklit bude donekonecna
 		{
@@ -159,13 +183,17 @@
 			}
 			if (item.CasManager[1])
 			{
-				item.CasVRade = item.CasVRade.AddSeconds(1);
+				item.CasVRade = item.CasVozik.AddSeconds(1);
 			}
 			if (item.CasManager[2])
 			{
-				item.CasZaPokladnou = item.CasZaPokladnou.AddSeconds(1);
+				item.CasVRade = item.CasVRade.AddSeconds(1);
 			}
 			if (item.CasManager[3])
+			{
+				item.CasZaPokladnou = item.CasZaPokladnou.AddSeconds(1);
+			}
+			if (item.CasManager[4])
 			{
 				item.CasZaVratnouStanicou = item.CasZaVratnouStanicou.AddSeconds(1);
 			}

@@ -7,10 +7,10 @@
 
 <h3>Settings</h3>
 
-<button @onclick="VyberPriecinka" class="oi oi-folder btn btn-primary "></button>
+<button @onclick="VyberPriecinka" class="oi oi-folder btn btn-primary btn-lg"></button>
 <input type="text" disabled="disabled" @bind="Zberac.FolderPath" @onclick="VyberPriecinka" />
 <div class="m-3">
-	<button @onclick="SaveToFile"  class="oi oi-file btn btn-outline-success" >Save data to selected folder</button>
+	<button @onclick="SaveToFile" class="btn btn-outline-success btn-lg m-3"><i class="oi oi-file"></i> Save data to selected folder</button>
 </div>
 
 
@@ -22,12 +22,35 @@
 	{
 		try
 		{
+			PermissionStatus status = PermissionStatus.Unknown;
+			status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();        //zisit ci ma povolenie na write do suborov
+			if (status != PermissionStatus.Granted)
+			{
+				if (Permissions.ShouldShowRationale<Permissions.StorageWrite>())    //ak uz bol zamietnuty niekedy tak vypise hlasku
+				{
+					await App.Current.MainPage.DisplayAlert("Apliakacia potrebuje povolenie na spravu k suborom", "", "OK");
+				}
+				status = await Permissions.RequestAsync<Permissions.StorageWrite>();        //opyta sa na povolenie
+				if (status != PermissionStatus.Granted)				//znova sa overi ci je povolenie
+				{
+					return;
+				}
+			}
+
+		}
+		catch (PermissionException e)
+		{
+			await App.Current.MainPage.DisplayAlert("Doslo k neocakavnej chybe pri udelovani povoleni", $"{e.StackTrace}", "OK");			
+		}
+
+		try
+		{
 			var folder = await FolderPicker.PickAsync(default);
 			Zberac.FolderPath = folder.Folder.Path;
 		}
-		catch
+		catch (Exception e)
 		{
-
+			await App.Current.MainPage.DisplayAlert("Chyba pri vyberu precinka", $"{e.StackTrace}", "OK");
 		}
 		await InvokeAsync(() => StateHasChanged());
 	}
@@ -37,13 +60,14 @@
 		if (Zberac.FolderPath.Equals("Vyber priecinok..."))
 		{
 			await App.Current.MainPage.DisplayAlert("Choose a folder please", $"", "OPSIE");
+			return;
 		}
 		try
 		{
 			var path = Path.Combine(Zberac.FolderPath, "DataFromObserve.csv");
 			if (!File.Exists(path))
 			{
-				File.WriteAllText(path, "");		//vytvori subor ak neni
+				File.WriteAllText(path, "");        //vytvori subor ak neni
 			}
 
 			foreach (var item in Zberac.ZoznamZaznamov)
@@ -51,7 +75,7 @@
 				File.AppendAllText(path, item.getCsvZaznam());
 			}
 
-			Zberac.ZoznamZaznamov.Clear();			//vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
+			Zberac.ZoznamZaznamov.Clear();          //vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
 
 			await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {path}", "OK");
 		}
@@ -61,7 +85,7 @@
 		}
 	}
 
+
 	
-	//publishnut appku
 }
 
