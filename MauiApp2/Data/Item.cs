@@ -29,7 +29,7 @@ namespace MauiApp2.Data
 
 
 		public string FarbaVlasov = "#FFFFFF";
-		public string FarbaOblecenia = "#FFFFFF";
+		public string FarbaOblecenia = "";
 		public bool[] CasManager = new bool[5];			//tolko kolko mame DateTime casovacov, treba si pamatat poradie (aktualne tak ako su za sebou napisane)
 		
 

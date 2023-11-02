@@ -14,7 +14,7 @@
 	<thead>
 		<tr>
 
-			<th scope="col">F_Oblec </th>
+			<th scope="col">Popis </th>
 			<th scope="col">F_Vlas</th>
 
 			<th scope="col">Sex</th>
@@ -38,16 +38,16 @@
 			<tr @key=data>
 
 				<td>
-					<input type="color" @bind=data.FarbaOblecenia />
+					<textarea class="text-body" cols="12" rows="3" @bind=data.FarbaOblecenia />
 				</td>
 				<td>
-					<input type="color" @bind=@data.FarbaVlasov />
+					<input type="color"  @bind=@data.FarbaVlasov />
 				</td>
 				<td>
-					<input type="checkbox" @bind=@data.Pohlavie />
+					<input type="checkbox" class="form-check" @bind=@data.Pohlavie />
 				</td>
 				<td>
-					<select @bind=@data.Vek>
+					<select class="form-select-lg" @bind=@data.Vek>
 						@foreach (TypVek enumValue in Enum.GetValues(typeof(TypVek)))
 						{
 							<option value="@(enumValue)">@enumValue</option>
@@ -55,7 +55,7 @@
 					</select>
 				</td>
 				<td>
-					<select @bind=@data.Kontainer>
+					<select class="form-select-lg" @bind=@data.Kontainer>
 						@foreach (TypKontainera enumValue in Enum.GetValues(typeof(TypKontainera)))
 						{
 							<option value="@(enumValue)">@enumValue</option>
@@ -63,35 +63,35 @@
 					</select>
 				</td>
 				<td>
-					<input type="checkbox" @bind=@data.MaVratKus />
+					<input type="checkbox" class="form-check" @bind=@data.MaVratKus />
 				</td>
 				<td >
 					<input type="text" @bind=data.CasCelkovy @bind:format="mm:ss" />
-					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 0)">Start</button>
-					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 0)">Stop</button>
+					<button class="btn @(data.CasManager[0] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 0)">Start</button>
+					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 0)">Stop</button>
 				</td>
 				<td>
 					<input type="text"@bind=data.CasVozik @bind:format="mm:ss" />
-					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 1)">Start</button>
-					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 1)">Stop</button>
+					<button class="btn @(data.CasManager[1] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 1)">Start</button>
+					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 1)">Stop</button>
 				</td>
 				<td>
 					<input type="text" @bind=data.CasVRade @bind:format="mm:ss" />
-					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 2)">Start</button>
-					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 2)">Stop</button>
+					<button class="btn @(data.CasManager[2] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 2)">Start</button>
+					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 2)">Stop</button>
 				</td>
 				<td>
 					<input type="text"  @bind=data.CasZaPokladnou @bind:format="mm:ss" />
-					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 3)">Start</button>
-					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 3)">Stop</button>
+					<button class="btn @(data.CasManager[3] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 3)">Start</button>
+					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 3)">Stop</button>
 				</td>
 				<td>
 					<input type="text" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
-					<button class="btn btn-primary m-1" @onclick="() => StartTimer(data, 4)" disabled="@(!data.MaVratKus)">Start</button>
-					<button class="btn btn-primary m-1" @onclick="() => StopTimer(data, 4)" disabled="@(!data.MaVratKus)">Stop</button>
+					<button class="btn @(data.CasManager[4] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 4)" disabled="@(!data.MaVratKus)">Start</button>
+					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 4)" disabled="@(!data.MaVratKus)">Stop</button>
 				</td>
 				<td>
-					<input type="checkbox" @bind=@data.Pokladna />
+					<input type="checkbox" class="form-check" @bind=@data.Pokladna />
 				</td>
 				<td>
 					<select multiple class="form-select-lg" @onchange="(args) => HandleChange(args,data)">
