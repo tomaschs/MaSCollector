@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using MauiApp2.Data;
-@implements IDisposable
+<!-- @@implements IDisposable -->
 
 
 <h1>Hlavný panel</h1>
@@ -116,11 +116,14 @@
 </table>
 
 @code {
-	//private DateTime currentDateTime = new DateTime(2000, 1, 1, 0, 0, 0);
-	private TimeSpan currentTime;                           //Casomiera DataTime MAX jeden den, inak reset
-	private System.Timers.Timer timer;
+
 	private bool isRunning = false;
 	private string[] optMoznosti = new string[] { "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" };
+
+	public Index()
+	{
+		Zberac.ReIniTimer(TimerElapsed,0);		
+	}
 
 
 	void HandleChange(ChangeEventArgs args, Item aktualnyItem)      //nastavi oznaceny select
@@ -136,40 +139,17 @@
 
 	private void StartTimer(Item akutalnyItem, int ktoryCasovac)        //spusti casovac / prida casovac
 	{
-
 		akutalnyItem.CasManager[ktoryCasovac] = true;           //zapnutie dotycneho casovaca
-
-		if (!isRunning)     //	zapnutie timera ak este nebol zapnuty. //POZOR ak sa nestopnu timery tak spustenim jedneho casovaca sa automaticky spustia ostatne, kedze ich stav sa nezmenil na false (moze mat plusy a minusy)
-		{
-			isRunning = true;
-			if (timer == null)
-			{
-				timer = new System.Timers.Timer(1000); // 1-second interval
-				timer.Elapsed += TimerElapsed;
-			}
-			timer.Start();
-		}
-
 	}
 
 
 	private void StopTimer(Item akutalnyItem, int ktoryCasovac)
 	{
-
 		akutalnyItem.CasManager[ktoryCasovac] = false;      //vypnutie dotycneho casovaca, celkovy cas stale plynie (je to asi jedno ze ide)
-
-		/*if (isRunning)
-			{
-			isRunning = false;
-			timer.Stop();
-		}*/
 	}
 
 	private void ResetTimer(Item akutalnyItem, int ktoryCasovac)        //nevyuzivam ale mozno sa niekedy bude hodit
 	{
-		//StopTimer(akutalnyItem, ktoryCasovac);		//cize zastavi dany timer
-		//currentTime = TimeSpan.Zero;				//nema vyznam
-		//currentDateTime = DateTime.Today.Add(currentTime);
 	}
 
 	private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -183,7 +163,7 @@
 			}
 			if (item.CasManager[1])
 			{
-				item.CasVRade = item.CasVozik.AddSeconds(1);
+				item.CasVozik = item.CasVozik.AddSeconds(1);
 			}
 			if (item.CasManager[2])
 			{
@@ -199,17 +179,17 @@
 			}
 		}
 
-		InvokeAsync(() => StateHasChanged());       //da impulz na aktualizovanie okna
+		try    //pre istotu
+		{
+			InvokeAsync(() => StateHasChanged());       //da impulz na aktualizovanie okna
+		}
+		catch{}
 	}
 
-	public void Dispose()       //ak sa prepne do ineho tabu tak sa casovac vymaze (doporucuje sa to)
+	/*public void Dispose()       
 	{
-		if (timer != null)
-		{
-			timer.Stop();
-			timer.Dispose();
-		}
-	}
+		
+	}*/
 
 	public void AddNewItem()
 	{
