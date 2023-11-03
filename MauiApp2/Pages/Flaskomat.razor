@@ -1,0 +1,49 @@
+﻿@page "/flaskomat"
+@using MauiApp2.Data;
+
+
+<h3>Flaškomat</h3>
+
+<div>
+	<button @onclick="AddNewItem">ADD item</button>
+</div>
+
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+
+			<th scope="col">Pocet Dostupnych Flaskomatov</th>
+			<th scope="col">Delete</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var data in Zberac.ZoznamFlaskomat)
+		{
+			<tr @key=data>
+				<td>
+					<input type="number" @bind=@data.PocetAktivVCase.Item2 />
+				</td>
+
+				<td>
+					<button @onclick="() => Vymaz(Zberac.ZoznamFlaskomat.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@code {
+
+	private void AddNewItem()
+	{
+		Zberac.ZoznamFlaskomat.Add(new ItemAktivum());
+	}
+
+	private void Vymaz(int row)     //vymaze prvok z riadku
+	{
+		Zberac.ZoznamFlaskomat.RemoveAt(row);
+	}
+
+}

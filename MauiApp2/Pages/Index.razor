@@ -3,7 +3,7 @@
 <!-- @@implements IDisposable -->
 
 
-<h1>Hlavný panel</h1>
+<h1>Nakupujúci</h1>
 
 <div>
 	<button @onclick="AddNewItem">ADD item</button>
@@ -55,7 +55,7 @@
 					</select>
 				</td>
 				<td>
-					<select class="form-select-lg" @bind=@data.Kontainer>
+					<select class="form-select-lg" @bind=@data.Kontainer >
 						@foreach (TypKontainera enumValue in Enum.GetValues(typeof(TypKontainera)))
 						{
 							<option value="@(enumValue)">@enumValue</option>
@@ -108,7 +108,7 @@
 
 			</tr>
 		}
-
+		
 
 
 
@@ -117,7 +117,6 @@
 
 @code {
 
-	private bool isRunning = false;
 	private string[] optMoznosti = new string[] { "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" };
 
 	public Index()
@@ -188,14 +187,14 @@
 
 	/*public void Dispose()       
 	{
-		
+
 	}*/
 
-	public void AddNewItem()
+	private void AddNewItem()
 	{
 		Zberac.ZoznamZaznamov.Add(new Item());
-	}
 
+	}
 
 
 

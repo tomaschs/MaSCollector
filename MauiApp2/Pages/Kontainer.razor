@@ -1,0 +1,88 @@
+﻿@page "/kontainer"
+@using MauiApp2.Data;
+
+<h3>Kontainer</h3>
+
+<div>
+	<button @onclick="AddNewItem">ADD item</button>
+</div>
+<!--<div>
+ 	<label for="generatFD">Generovať záznamy od zákaznikov</label>
+	<input type="checkbox" id="generatFD" @bind=AutoSaveZaznKontainera />
+	<input type="number" class="w-25" disabled="@(!AutoSaveZaznKontainera)" @bind=kosik />
+	<input type="number" class="w-25" disabled="@(!AutoSaveZaznKontainera)" @bind=vozik />
+	<button class="btn btn-warning" disabled="@(!AutoSaveZaznKontainera)" @onclick="GenerovatZaznamy">Generovat</button> 
+</div>-->
+
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+
+			<th scope="col">F-Kosik|T-Vozik </th>
+			<th scope="col">Pocet Dostupnych Kontainerov</th>
+			<th scope="col">Delete</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var data in Zberac.ZoznamKontainer)
+		{
+			<tr @key=data>
+				<td>
+					<input type="checkbox" class="form-check" @bind=@data.Aktivum />
+				</td>
+				<td>
+					<input type="number" @bind=@data.PocetAktivVCase.Item2 />
+				</td>
+
+
+				<td>
+					<button @onclick="() => Vymaz(Zberac.ZoznamKontainer.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@code {
+
+	private bool AutoSaveZaznKontainera = false;              //pre automaticke zaznamenavanie pouzitych kontainerov
+	private int kosik = 0;
+	private int vozik = 0;
+
+	private void AddNewItem()
+	{
+		Zberac.ZoznamKontainer.Add(new ItemAktivum());
+	}
+
+	private void Vymaz(int row)     //vymaze prvok z riadku
+	{
+		Zberac.ZoznamKontainer.RemoveAt(row);
+	}
+
+	/*private void GenerovatZaznamy()
+	{
+		
+		foreach (var item in Zberac.ZoznamZaznamov)
+		{
+			
+
+				ItemAktivum novy = new ItemAktivum();
+				novy.PocetAktivVCase.Item1 = item.DatumVstupDoSystemu;      //prevezme datum vstupu do systemu
+				--kosik;
+				novy.PocetAktivVCase.Item2 = kosik;
+				Zberac.ZoznamKontainer.Add(novy);	
+			}
+			if (item.Kontainer == TypKontainera.Vozik)
+			{
+				ItemAktivum novy = new ItemAktivum();
+				novy.PocetAktivVCase.Item1 = item.DatumVstupDoSystemu;      //prevezme datum vstupu do systemu
+				--vozik;
+				novy.PocetAktivVCase.Item2 = vozik;
+				Zberac.ZoznamKontainer.Add(novy);
+			}
+		}
+	}*/
+
+}

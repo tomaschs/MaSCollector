@@ -5,12 +5,12 @@
 @using System.Text.Json
 @using CommunityToolkit.Maui.Storage
 
-<h3>Settings</h3>
+<h3>Nastavenia</h3>
 
 <button @onclick="VyberPriecinka" class="oi oi-folder btn btn-primary btn-lg"></button>
 <input type="text" disabled="disabled" @bind="Zberac.FolderPath" @onclick="VyberPriecinka" />
 <div class="m-3">
-	<button @onclick="SaveToFile" class="btn btn-outline-success btn-lg m-3"><i class="oi oi-file"></i> Save data to selected folder</button>
+	<button @onclick="SaveFiles" class="btn btn-outline-success btn-lg m-3"><i class="oi oi-file"></i> Save data to selected folder</button>
 </div>
 
 
@@ -54,7 +54,29 @@
 		await InvokeAsync(() => StateHasChanged());
 	}
 
-	private async Task SaveToFile()
+	private async Task SaveFiles()
+	{
+		try
+		{
+			await SaveToFile(Zberac.ZoznamZaznamov.ToArray(), "DataFromObserve.csv");
+			await SaveToFile(Zberac.ZoznamPredajna.ToArray(), "PredajnaFromObserve.csv");
+			await SaveToFile(Zberac.ZoznamKontainer.ToArray(), "KontainerFromObserve.csv");
+			await SaveToFile(Zberac.ZoznamFlaskomat.ToArray(), "FlaskomatFromObserve.csv");
+			Zberac.ZoznamZaznamov.Clear();   //vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
+			Zberac.ZoznamPredajna.Clear();
+			Zberac.ZoznamKontainer.Clear();
+			Zberac.ZoznamFlaskomat.Clear();
+			await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {Zberac.FolderPath}", "OK");
+		}
+		catch (Exception e)
+		{
+			await App.Current.MainPage.DisplayAlert("Error:", $" {e.Message}", "OK");
+		
+		}
+
+	}
+
+	private async Task SaveToFile(IItems[] zoznam, string nazovSubora)		//pridava do subora zaznamy
 	{
 		if (Zberac.FolderPath.Equals("Vyber priecinok..."))
 		{
@@ -63,20 +85,25 @@
 		}
 		try
 		{
-			var path = Path.Combine(Zberac.FolderPath, "DataFromObserve.csv");
+			var path = Path.Combine(Zberac.FolderPath, nazovSubora);
 			if (!File.Exists(path))
 			{
 				File.WriteAllText(path, "");        //vytvori subor ak neni
 			}
 
-			foreach (var item in Zberac.ZoznamZaznamov)
+			foreach (var item in zoznam)
 			{
-				File.AppendAllText(path, item.getCsvZaznam());
+				if (item is Item)
+				{
+					File.AppendAllText(path, ((Item)item).GetCsvZaznam());
+				}
+				if (item is ItemAktivum)
+				{
+					File.AppendAllText(path, ((ItemAktivum)item).GetCsvZaznam());
+				}
 			}
-
-			Zberac.ZoznamZaznamov.Clear();          //vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
-
-			await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {path}", "OK");
+				     
+			//await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {path}", "OK");
 		}
 		catch
 		{

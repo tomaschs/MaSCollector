@@ -1,6 +1,53 @@
 ﻿@page "/predajna"
-<h3>Predajna</h3>
+@using MauiApp2.Data;
+
+<h3>Predajňa</h3>
+
+<div>
+	<button @onclick="AddNewItem">ADD item</button>
+</div>
+
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+
+			<th scope="col">F-Bez|T-Norm Predajna</th>
+			<th scope="col">Pocet Dostupnych Predajni</th>
+			<th scope="col">Delete</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var data in Zberac.ZoznamPredajna)
+		{
+			<tr @key=data>
+				<td>
+					<input type="checkbox" class="form-check" @bind=@data.Aktivum />
+				</td>
+				<td>
+					<input type="number" @bind=@data.PocetAktivVCase.Item2 />
+				</td>
+
+
+				<td>
+					<button @onclick="() => Vymaz(Zberac.ZoznamPredajna.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
 
 @code {
+
+	private void AddNewItem()
+	{
+		Zberac.ZoznamPredajna.Add(new ItemAktivum());
+	}
+
+	private void Vymaz(int row)     //vymaze prvok z riadku
+	{
+		Zberac.ZoznamPredajna.RemoveAt(row);
+	}
 
 }

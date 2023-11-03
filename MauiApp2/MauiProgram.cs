@@ -26,14 +26,6 @@ public static class MauiProgram
 
 
 
-		Item nov = new Item();
-
-		Zberac.ZoznamZaznamov.Add(nov);
-		nov = new Item();
-		Zberac.ZoznamZaznamov.Add(nov);
-		nov = new Item();
-		Zberac.ZoznamZaznamov.Add(nov);
-
 		return builder.Build();
 	}
 }

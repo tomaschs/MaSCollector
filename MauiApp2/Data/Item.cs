@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MauiApp2.Data
 {
-	public class Item
+	public class Item : IItems
 	{
 		public TypVek Vek = TypVek.Dospely;
 		public TypKontainera Kontainer = TypKontainera.Bez;
@@ -30,10 +30,10 @@ namespace MauiApp2.Data
 
 		public string FarbaVlasov = "#FFFFFF";
 		public string FarbaOblecenia = "";
-		public bool[] CasManager = new bool[5];			//tolko kolko mame DateTime casovacov, treba si pamatat poradie (aktualne tak ako su za sebou napisane)
+		public bool[] CasManager = new bool[5] {true, false, false, false, false };			//tolko kolko mame DateTime casovacov, treba si pamatat poradie (aktualne tak ako su za sebou napisane)
 		
 
-		public string getCsvZaznam() {      //vrati zaznam oddeleny ';' + enter
+		public string GetCsvZaznam() {      //vrati zaznam oddeleny ';' + enter
 
 			if (MoznostiNakupu.Count != 0) {
 				if (MoznostiNakupu.Contains("Pecivo")) {
