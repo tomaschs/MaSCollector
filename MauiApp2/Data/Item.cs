@@ -24,6 +24,7 @@ namespace MauiApp2.Data
 		public DateTime CasVozik = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasVRade = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasZaPokladnou = new DateTime(2000, 1, 1, 0, 0, 0);
+		//public DateTime CasVRadeZaVratnouStanicou = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasZaVratnouStanicou = new DateTime(2000, 1, 1, 0, 0, 0);
 		public List<string> MoznostiNakupu = new List<string>();     //{ "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" }
 
@@ -57,8 +58,8 @@ namespace MauiApp2.Data
 				}
 			}
 
-			return DatumVstupDoSystemu.ToString("dd.MM.yyyy HH:mm:ss") + ";" + CasCelkovy.ToString("mm:ss") + ";" + CasVozik.ToString("mm:ss") + ";" + CasVRade.ToString("mm:ss") + ";"
-				+ CasZaPokladnou.ToString("mm:ss") + ";" + CasZaVratnouStanicou.ToString("mm:ss") + ";" + Pohlavie + ";" + Vek + ";"
+			return DatumVstupDoSystemu.ToString("dd.MM.yyyy HH:mm:ss") + ";" + CasCelkovy.ToString("HH:mm:ss") + ";" + CasVozik.ToString("HH:mm:ss") + ";" + CasVRade.ToString("HH:mm:ss") + ";"
+				+ CasZaPokladnou.ToString("HH:mm:ss") + ";" + CasZaVratnouStanicou.ToString("HH:mm:ss") + ";" + Pohlavie + ";" + Vek + ";"
 				+ Kontainer + ";" + MaVratKus + ";" + Pokladna + ";" + Pecivo + ";" + Voda + ";" + Alkohol + ";" + Drogeria + ";" + Maso + "\n";
 		}
 	}
