@@ -1,0 +1,28 @@
+﻿@page "/prichody"
+@using MauiApp2.Data;
+
+<h3>Prichody</h3>
+
+<div>
+    <button class="btn btn-success btn-lg" @onclick="Pridaj">Prichod zakaznika</button>
+    <label>Pocet: @(Zberac.ZoznamPrichodov.Count)</label>
+
+    <button class="btn btn-warning btn-lg" @onclick="Delete">Vymaz poslende pridaneho zakaznika</button>
+</div>
+
+@code {
+    private void Pridaj()
+    {
+        Zberac.ZoznamPrichodov.Add(new Item());
+
+
+    }
+
+    private void Delete()
+    {
+        if (Zberac.ZoznamPrichodov.Count - 1 >= 0)
+        {
+            Zberac.ZoznamPrichodov.RemoveAt(Zberac.ZoznamPrichodov.Count - 1);
+        }
+    }
+}

@@ -5,196 +5,212 @@
 
 <h1>Nakupujúci</h1>
 
-<div>
-	<button @onclick="AddNewItem">ADD item</button>
-</div>
 
 
 <table class="table table-striped">
-	<thead>
-		<tr>
+    <thead>
+        <tr>
 
-			<th scope="col">Popis </th>
-			<th scope="col">F_Vlas</th>
+            <th scope="col">Popis </th>
+            <!--<th scope="col">F_Vlas</th> -->
 
-			<th scope="col">Sex</th>
-			<th scope="col">Vek</th>
-			<th scope="col">Kontainer</th>
-			<th scope="col">Vratne</th>
-			<th scope="col">Cas Celkom</th>
-			<th scope="col">Cas Vozik</th>
-			<th scope="col">Cas Rada</th>
-			<th scope="col">Cas Pokladna</th>
-			<th scope="col">Cas Vratna</th>
-			<th scope="col">Pokladna</th>
-			<th scope="col">Nakup</th>
-			<th scope="col">Delete</th>
+            <th scope="col">Muz/Zena</th>
+            <th scope="col">Vek</th>
+            <th scope="col">Kontainer</th>
+            <th scope="col">Cas Celkom</th>
+            <th scope="col">Cas Rada</th>
+            <th scope="col">Cas Pokladna</th>
+            <th scope="col">Vratne</th>
+            <th scope="col">Cas Vratna</th>
+            <th scope="col">Cas Vozik</th>
+            <th scope="col">samo/norm Pokladna</th>
+            <th scope="col">Nakup</th>
+            <th scope="col">Uloz</th>
+            <th scope="col">Delete</th>
 
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var data in Zberac.ZoznamZaznamov)
-		{
-			<tr @key=data>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Zberac.ZoznamZaznamov)
+        {
+            @if (!data.Ulozene)
+            {
+                <tr @key=data>
 
-				<td>
-					<textarea class="text-body" cols="12" rows="3" @bind=data.FarbaOblecenia />
-				</td>
-				<td>
-					<input type="color"  @bind=@data.FarbaVlasov />
-				</td>
-				<td>
-					<input type="checkbox" class="form-check" @bind=@data.Pohlavie />
-				</td>
-				<td>
-					<select class="form-select-lg" @bind=@data.Vek>
-						@foreach (TypVek enumValue in Enum.GetValues(typeof(TypVek)))
-						{
-							<option value="@(enumValue)">@enumValue</option>
-						}
-					</select>
-				</td>
-				<td>
-					<select class="form-select-lg" @bind=@data.Kontainer >
-						@foreach (TypKontainera enumValue in Enum.GetValues(typeof(TypKontainera)))
-						{
-							<option value="@(enumValue)">@enumValue</option>
-						}
-					</select>
-				</td>
-				<td>
-					<input type="checkbox" class="form-check" @bind=@data.MaVratKus />
-				</td>
-				<td >
-					<input type="text" @bind=data.CasCelkovy @bind:format="mm:ss" />
-					<button class="btn @(data.CasManager[0] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 0)">Start</button>
-					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 0)">Stop</button>
-				</td>
-				<td>
-					<input type="text"@bind=data.CasVozik @bind:format="mm:ss" />
-					<button class="btn @(data.CasManager[1] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 1)">Start</button>
-					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 1)">Stop</button>
-				</td>
-				<td>
-					<input type="text" @bind=data.CasVRade @bind:format="mm:ss" />
-					<button class="btn @(data.CasManager[2] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 2)">Start</button>
-					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 2)">Stop</button>
-				</td>
-				<td>
-					<input type="text"  @bind=data.CasZaPokladnou @bind:format="mm:ss" />
-					<button class="btn @(data.CasManager[3] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 3)">Start</button>
-					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 3)">Stop</button>
-				</td>
-				<td>
-					<input type="text" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
-					<button class="btn @(data.CasManager[4] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 4)" disabled="@(!data.MaVratKus)">Start</button>
-					<button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 4)" disabled="@(!data.MaVratKus)">Stop</button>
-				</td>
-				<td>
-					<input type="checkbox" class="form-check" @bind=@data.Pokladna />
-				</td>
-				<td>
-					<select multiple class="form-select-lg" @onchange="(args) => HandleChange(args,data)">
-						@foreach (var option in optMoznosti)
-						{
-							<option @key=@option selected=@(data.MoznostiNakupu.Contains(option)) value=@option>@option</option>
-						}
-					</select>
-				</td>
-
-				<td>
-					<button @onclick="() => Vymaz(Zberac.ZoznamZaznamov.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
-				</td>
-
-			</tr>
-		}
-		
+                    <td>
+                        <textarea class="text-body" cols="14" rows="3" @bind=data.FarbaOblecenia> </textarea>
+                    </td>
+                    <!-- <td>
+                        <input type="color"  @bind=@data.FarbaVlasov />
+                    </td> -->
+                    <td>
+                        <input type="checkbox" class="form-check" @bind=@data.Pohlavie />
+                    </td>
+                    <td>
+                        <select class="form-select-lg" @bind=@data.Vek>
+                            @foreach (TypVek enumValue in Enum.GetValues(typeof(TypVek)))
+                            {
+                                <option value="@(enumValue)">@enumValue</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select-lg" @bind=@data.Kontainer>
+                            @foreach (TypKontainera enumValue in Enum.GetValues(typeof(TypKontainera)))
+                            {
+                                <option value="@(enumValue)">@enumValue</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" @bind=data.CasCelkovy @bind:format="mm:ss" />
+                        <button class="btn @(data.CasManager[0] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 0)">Start</button>
+                        <button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 0)">Stop</button>
+                    </td>
+                    <td>
+                        <input type="text" @bind=data.CasVRade @bind:format="mm:ss" />
+                        <button class="btn @(data.CasManager[2] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 2)">Start</button>
+                        <button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 2)">Stop</button>
+                    </td>
+                    <td>
+                        <input type="text" @bind=data.CasZaPokladnou @bind:format="mm:ss" />
+                        <button class="btn @(data.CasManager[3] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 3)">Start</button>
+                        <button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 3)">Stop</button>
+                    </td>
+                    <td>
+                        <input type="checkbox" class="form-check" @bind=@data.MaVratKus />
+                    </td>
+                    <td>
+                        <input type="text" @bind=data.CasZaVratnouStanicou @bind:format="mm:ss" disabled="@(!data.MaVratKus)" />
+                        <button class="btn @(data.CasManager[4] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 4)" disabled="@(!data.MaVratKus)">Start</button>
+                        <button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 4)" disabled="@(!data.MaVratKus)">Stop</button>
+                    </td>
+                    <td>
+                        <input type="text" @bind=data.CasVozik @bind:format="mm:ss" />
+                        <button class="btn @(data.CasManager[1] ? "btn-success" : "btn-primary") m-1" @onclick="() => StartTimer(data, 1)">Start</button>
+                        <button class="btn btn-danger m-1" @onclick="() => StopTimer(data, 1)">Stop</button>
+                    </td>
+                    <td>
+                        <input type="checkbox" class="form-check" @bind=@data.Pokladna />
+                    </td>
+                    <td>
+                        <select multiple class="form-select-lg" @onchange="(args) => HandleChange(args,data)">
+                            @foreach (var option in optMoznosti)
+                            {
+                                <option @key=@option selected=@(data.MoznostiNakupu.Contains(option)) value=@option>@option</option>
+                            }
+                        </select>
+                    </td>
 
 
+                    <td>
+                        <button @onclick="() => Uloz(Zberac.ZoznamZaznamov.IndexOf(data))" class="oi oi-check btn btn-success"></button>
+                    </td>
+                    <td>
+                        <button @onclick="() => Vymaz(Zberac.ZoznamZaznamov.IndexOf(data))" class="oi oi-trash btn btn-danger"></button>
+                    </td>
 
-	</tbody>
+                </tr>
+            }
+        }
+
+
+
+    </tbody>
 </table>
+
+<div>
+    <button class="btn btn-primary" @onclick="AddNewItem">ADD item</button>
+    <label>Pocet: @(Zberac.ZoznamZaznamov.Count) </label>
+</div>
 
 @code {
 
-	private string[] optMoznosti = new string[] { "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" };
+    private string[] optMoznosti = new string[] { "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" };
 
-	public Index()
-	{
-		Zberac.ReIniTimer(TimerElapsed,0);		
-	}
+    public Index()
+    {
+        Zberac.ReIniTimer(TimerElapsed, 0);
 
-
-	void HandleChange(ChangeEventArgs args, Item aktualnyItem)      //nastavi oznaceny select
-	{
-		aktualnyItem.MoznostiNakupu.Clear();
-		aktualnyItem.MoznostiNakupu.AddRange((string[])args.Value);
-	}
-
-	private void Vymaz(int row)     //vymaze prvok z riadku
-	{
-		Zberac.ZoznamZaznamov.RemoveAt(row);
-	}
-
-	private void StartTimer(Item akutalnyItem, int ktoryCasovac)        //spusti casovac / prida casovac
-	{
-		akutalnyItem.CasManager[ktoryCasovac] = true;           //zapnutie dotycneho casovaca
-	}
+    }
 
 
-	private void StopTimer(Item akutalnyItem, int ktoryCasovac)
-	{
-		akutalnyItem.CasManager[ktoryCasovac] = false;      //vypnutie dotycneho casovaca, celkovy cas stale plynie (je to asi jedno ze ide)
-	}
+    void HandleChange(ChangeEventArgs args, Item aktualnyItem)      //nastavi oznaceny select
+    {
+        aktualnyItem.MoznostiNakupu.Clear();
+        aktualnyItem.MoznostiNakupu.AddRange((string[])args.Value);
+    }
 
-	private void ResetTimer(Item akutalnyItem, int ktoryCasovac)        //nevyuzivam ale mozno sa niekedy bude hodit
-	{
-	}
+    private void Uloz(int row)     //vymaze prvok z riadku
+    {
+        Zberac.ZoznamZaznamov[row].Namerany();
+    }
 
-	private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
-	{
 
-		foreach (var item in Zberac.ZoznamZaznamov) //refresh casovacov o sekundu, //NOTE: ak toto bude trvat dlhsie nez sekundu tak asi sa cyklit bude donekonecna
-		{
-			if (item.CasManager[0])
-			{
-				item.CasCelkovy = item.CasCelkovy.AddSeconds(1);
-			}
-			if (item.CasManager[1])
-			{
-				item.CasVozik = item.CasVozik.AddSeconds(1);
-			}
-			if (item.CasManager[2])
-			{
-				item.CasVRade = item.CasVRade.AddSeconds(1);
-			}
-			if (item.CasManager[3])
-			{
-				item.CasZaPokladnou = item.CasZaPokladnou.AddSeconds(1);
-			}
-			if (item.CasManager[4])
-			{
-				item.CasZaVratnouStanicou = item.CasZaVratnouStanicou.AddSeconds(1);
-			}
-		}
+    private void Vymaz(int row)     //vymaze prvok z riadku
+    {
+        Zberac.ZoznamZaznamov.RemoveAt(row);
+    }
 
-		try    //pre istotu
-		{
-			InvokeAsync(() => StateHasChanged());       //da impulz na aktualizovanie okna
-		}
-		catch{}
-	}
+    private void StartTimer(Item akutalnyItem, int ktoryCasovac)        //spusti casovac / prida casovac
+    {
+        akutalnyItem.CasManager[ktoryCasovac] = true;           //zapnutie dotycneho casovaca
+    }
 
-	/*public void Dispose()       
-	{
 
-	}*/
+    private void StopTimer(Item akutalnyItem, int ktoryCasovac)
+    {
+        akutalnyItem.CasManager[ktoryCasovac] = false;      //vypnutie dotycneho casovaca, celkovy cas stale plynie (je to asi jedno ze ide)
+    }
 
-	private void AddNewItem()
-	{
-		Zberac.ZoznamZaznamov.Add(new Item());
+    private void ResetTimer(Item akutalnyItem, int ktoryCasovac)        //nevyuzivam ale mozno sa niekedy bude hodit
+    {
+    }
 
-	}
+    private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+
+        foreach (var item in Zberac.ZoznamZaznamov) //refresh casovacov o sekundu, //NOTE: ak toto bude trvat dlhsie nez sekundu tak asi sa cyklit bude donekonecna
+        {
+            if (item.CasManager[0])
+            {
+                item.CasCelkovy = item.CasCelkovy.AddSeconds(1);
+            }
+            if (item.CasManager[1])
+            {
+                item.CasVozik = item.CasVozik.AddSeconds(1);
+            }
+            if (item.CasManager[2])
+            {
+                item.CasVRade = item.CasVRade.AddSeconds(1);
+            }
+            if (item.CasManager[3])
+            {
+                item.CasZaPokladnou = item.CasZaPokladnou.AddSeconds(1);
+            }
+            if (item.CasManager[4])
+            {
+                item.CasZaVratnouStanicou = item.CasZaVratnouStanicou.AddSeconds(1);
+            }
+        }
+
+        try    //pre istotu
+        {
+            InvokeAsync(() => StateHasChanged());       //da impulz na aktualizovanie okna
+        }
+        catch { }
+    }
+
+    /*public void Dispose()
+    {
+
+    }*/
+
+    private void AddNewItem()
+    {
+        Zberac.ZoznamZaznamov.Add(new Item());
+
+    }
 
 
 

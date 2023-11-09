@@ -24,15 +24,20 @@ namespace MauiApp2.Data
 		public DateTime CasVozik = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasVRade = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasZaPokladnou = new DateTime(2000, 1, 1, 0, 0, 0);
+		public DateTime DatumVystupuOdSystemu = DateTime.Now;
 		//public DateTime CasVRadeZaVratnouStanicou = new DateTime(2000, 1, 1, 0, 0, 0);
 		public DateTime CasZaVratnouStanicou = new DateTime(2000, 1, 1, 0, 0, 0);
 		public List<string> MoznostiNakupu = new List<string>();     //{ "Pecivo", "Voda", "Alkohol", "Drogeria", "Maso" }
 
-
+		public bool Ulozene = false;
 		public string FarbaVlasov = "#FFFFFF";
-		public string FarbaOblecenia = "";
-		public bool[] CasManager = new bool[5] {true, false, false, false, false };			//tolko kolko mame DateTime casovacov, treba si pamatat poradie (aktualne tak ako su za sebou napisane)
-		
+		public string FarbaOblecenia = "Noh:\nObl:\nVla:";
+		public bool[] CasManager = new bool[5] {true, false, false, false, false };         //tolko kolko mame DateTime casovacov, treba si pamatat poradie (aktualne tak ako su za sebou napisane)
+
+		public void Namerany() {
+			Ulozene = true;
+			DatumVystupuOdSystemu = DateTime.Now;
+		}
 
 		public string GetCsvZaznam() {      //vrati zaznam oddeleny ';' + enter
 
@@ -59,7 +64,7 @@ namespace MauiApp2.Data
 			}
 
 			return DatumVstupDoSystemu.ToString("dd.MM.yyyy HH:mm:ss") + ";" + CasCelkovy.ToString("HH:mm:ss") + ";" + CasVozik.ToString("HH:mm:ss") + ";" + CasVRade.ToString("HH:mm:ss") + ";"
-				+ CasZaPokladnou.ToString("HH:mm:ss") + ";" + CasZaVratnouStanicou.ToString("HH:mm:ss") + ";" + Pohlavie + ";" + Vek + ";"
+				+ CasZaPokladnou.ToString("HH:mm:ss") + ";" + CasZaVratnouStanicou.ToString("HH:mm:ss") + ";" + DatumVystupuOdSystemu.ToString("dd.MM.yyyy HH:mm:ss") + ";" + Pohlavie + ";" + Vek + ";"
 				+ Kontainer + ";" + MaVratKus + ";" + Pokladna + ";" + Pecivo + ";" + Voda + ";" + Alkohol + ";" + Drogeria + ";" + Maso + "\n";
 		}
 	}

@@ -32,6 +32,11 @@
 				status = await Permissions.RequestAsync<Permissions.StorageWrite>();        //opyta sa na povolenie
 				if (status != PermissionStatus.Granted)				//znova sa overi ci je povolenie
 				{
+					/*#if ANDROID
+					var docsDirectory = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDcim);
+					File.WriteAllText($"{docsDirectory.AbsoluteFile.Path}/atextfile.txt", "contents are here");
+					#endif*/				
+					await App.Current.MainPage.DisplayAlert("Apliakacia potrebuje povolenie na spravu k suborom", "", "OK");
 					return;
 				}
 			}
@@ -62,16 +67,33 @@
 			await SaveToFile(Zberac.ZoznamPredajna.ToArray(), "PredajnaFromObserve.csv");
 			await SaveToFile(Zberac.ZoznamKontainer.ToArray(), "KontainerFromObserve.csv");
 			await SaveToFile(Zberac.ZoznamFlaskomat.ToArray(), "FlaskomatFromObserve.csv");
-			Zberac.ZoznamZaznamov.Clear();   //vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
+			foreach (Item o in Zberac.ZoznamPrichodov)
+			{
+				o.Namerany();	
+			}
+			await SaveToFile(Zberac.ZoznamPrichodov.ToArray(), "DataFromArrival.csv");
+			//vymaze aktualny zoznam, kedze je uz ulozeny (aby sa neukladali dalsie data)
+			List<Item> novy = new List<Item>();
+			foreach (Item o in Zberac.ZoznamZaznamov)
+			{
+				if (!o.Ulozene)
+				{
+					novy.Add(o);
+				}
+			}
+			Zberac.ZoznamZaznamov.Clear();
+			Zberac.ZoznamZaznamov.AddRange(novy);
+
 			Zberac.ZoznamPredajna.Clear();
 			Zberac.ZoznamKontainer.Clear();
 			Zberac.ZoznamFlaskomat.Clear();
+			Zberac.ZoznamPrichodov.Clear();
 			await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {Zberac.FolderPath}", "OK");
 		}
 		catch (Exception e)
 		{
 			await App.Current.MainPage.DisplayAlert("Error:", $" {e.Message}", "OK");
-		
+
 		}
 
 	}
@@ -88,14 +110,25 @@
 			var path = Path.Combine(Zberac.FolderPath, nazovSubora);
 			if (!File.Exists(path))
 			{
-				File.WriteAllText(path, "");        //vytvori subor ak neni
+				try
+				{
+					File.WriteAllText(path, "");        //vytvori subor ak neni
+				}
+				catch (Exception e)
+				{
+					await App.Current.MainPage.DisplayAlert("Chyba pri vytvarani subora", $"Cesta:{path}, chyba:{e.Message}.\n stacktrace {e.StackTrace}", "OK");
+
+				}
 			}
 
 			foreach (var item in zoznam)
 			{
 				if (item is Item)
 				{
-					File.AppendAllText(path, ((Item)item).GetCsvZaznam());
+					if (((Item)item).Ulozene)
+					{
+						File.AppendAllText(path, ((Item)item).GetCsvZaznam());
+					}
 				}
 				if (item is ItemAktivum)
 				{
@@ -105,9 +138,9 @@
 				     
 			//await App.Current.MainPage.DisplayAlert("List was added to the file", $"List has been added to {path}", "OK");
 		}
-		catch
+		catch (Exception e)
 		{
-			await App.Current.MainPage.DisplayAlert("Error in appending a file ", $"Unhandled exception occured", "OH");
+			await App.Current.MainPage.DisplayAlert("Error in appending a file ", $"Unhandled exception occured: {e.Message}. StackTrace: {e.StackTrace} ", "OH");
 		}
 	}
 

@@ -16,10 +16,11 @@ namespace MauiApp2.Data
 		public static List<Item> ZoznamZaznamov = new List<Item>();				//ludia
 		public static List<ItemAktivum> ZoznamPredajna = new List<ItemAktivum>();		//predajne
 		public static List<ItemAktivum> ZoznamKontainer = new List<ItemAktivum>();		//kontainre
-		public static List<ItemAktivum> ZoznamFlaskomat = new List<ItemAktivum>();		//flaskomat/y
+		public static List<ItemAktivum> ZoznamFlaskomat = new List<ItemAktivum>();      //flaskomat/y
+        public static List<Item> ZoznamPrichodov = new List<Item>();             //ludia prichody
 
 
-		public static string FolderPath = "Vyber priecinok...";				//priecinok, kde sa ulozia csv
+        public static string FolderPath = "Vyber priecinok...";				//priecinok, kde sa ulozia csv
 
 		private static System.Timers.Timer timer;		//casovac
 		private static ElapsedEventHandler[] listofEvents = new ElapsedEventHandler[5];		//list dostupnxch miest pre registrciu metod, ktore sa maju opakovat po sekunde napr
